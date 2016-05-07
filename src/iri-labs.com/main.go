@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,8 +13,16 @@ var favIcon []byte = nil
 var markPng []byte = nil
 var styleCss []byte = nil
 var theTemplate *template.Template = nil
+var rootDirFlag *string = flag.String("root", ".", "root directory from which to serve")
+var hostFlag *string = flag.String("host", "", "default host address on which to serve")
+var portFlag *int = flag.Int("port", 80, "serve on this port")
 
 func init() {
+	flag.Parse()
+	if e := os.Chdir(*rootDirFlag); e != nil {
+		log.Fatal("unable to chdir to '%s'", *rootDirFlag)
+	}
+
 	fi, e := readFile("data/favicon.ico")
 	if e != nil {
 		log.Println(e)
@@ -131,7 +141,8 @@ func main() {
 	http.HandleFunc("/about", aboutHandler)
 	http.HandleFunc("/jobs", jobsHandler)
 	http.HandleFunc("/style.css", cssHandler)
-	err := http.ListenAndServe(":8080", nil)
+	log.Printf("serving from %s:%d in %s", *hostFlag, *portFlag, *rootDirFlag)
+	err := http.ListenAndServe(fmt.Sprintf("%s:%d", *hostFlag, *portFlag), nil)
 	if err != nil {
 		log.Fatalf("error %s", err)
 	}
