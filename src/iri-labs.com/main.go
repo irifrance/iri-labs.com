@@ -75,7 +75,8 @@ func logRequest(r *http.Request) {
 }
 
 type TemplData struct {
-	Active string
+	Active        string
+	ContactThanks string
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
@@ -140,7 +141,9 @@ func main() {
 	http.HandleFunc("/womb", wombHandler)
 	http.HandleFunc("/about", aboutHandler)
 	http.HandleFunc("/jobs", jobsHandler)
+	http.HandleFunc("/contact", contactHandler)
 	http.HandleFunc("/style.css", cssHandler)
+
 	log.Printf("serving from %s:%d in %s", *hostFlag, *portFlag, *rootDirFlag)
 	err := http.ListenAndServe(fmt.Sprintf("%s:%d", *hostFlag, *portFlag), nil)
 	if err != nil {
