@@ -1,0 +1,23 @@
+{{define "contact"}}
+{{template "head" .}}
+
+</center>
+
+<table width="60%">
+	{{ .ContactThanks }}
+	<tr><td align="left">
+			<form method="post" target="/contact">
+				Name: <input type="text" name="name"/><br/>
+				Institute: <input type="text" name="institute"/><br/>
+				Email: <input type="email" name="email"/><br/>
+				Phone: <input type="text" name="phone"/><br/>
+				Request: <input type="radio" name="subject"/><br/>
+				Message: <input type="text" name="message"/><br/>
+				<input type="submit"/>
+			</form>
+			</td>
+		</tr>
+</table>
+<center>
+{{template "foot"}}
+{{end}}
