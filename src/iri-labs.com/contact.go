@@ -67,7 +67,7 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// GET or Post
-	err := theTemplate.ExecuteTemplate(w, "contact", &TemplData{Active: "jobs"})
+	err := theTemplate.ExecuteTemplate(w, "contact", &TemplData{Active: "jobs", ContactThanks: r.Method == "POST"})
 	if err != nil {
 		log.Printf("error: %s", err)
 	}

@@ -76,7 +76,7 @@ func logRequest(r *http.Request) {
 
 type TemplData struct {
 	Active        string
-	ContactThanks string
+	ContactThanks bool
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
