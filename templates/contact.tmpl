@@ -16,19 +16,19 @@
 		</td></tr>
 	<tr><td align="left">
 
-			<form method="post" target="/contact">
+			<form method="post" target="_self">
 				<table>
-					<tr><td>Name:</td><td> <input type="text" name="name"/></td></tr>
+					<tr><td>Name:</td><td> <input type="text" name="name" required/></td></tr>
 					<tr><td>Institute:</td><td> <input type="text" name="institute"/></td></tr>
-					<tr><td>Email:</td><td> <input type="email" name="email"/></td></tr>
-					<tr><td>Phone:</td><td><input type="text" name="phone"/></td></tr>
+					<tr><td>Email:</td><td> <input type="email" name="email" required/></td></tr>
+					<tr><td>Phone:</td><td><input type="tel" name="phone" required/></td></tr>
 					<tr><td>Request:</td><td>
 							<select name="subject">
 								{{range $key, $value := .ContactSubjects}}
 									<option value="{{ $key }}">{{ $value }}</option>
 								{{end}}
 							</select>
-					<tr><td>Message:</td><td> <textarea name="message" rows="10" cols="30"></textarea></td></tr>
+					<tr><td>Message:</td><td> <textarea name="message" required rows="10" cols="30"></textarea></td></tr>
 					<tr> <td align="center" colspan="2">
 							<input type="submit"/>
 						</td>
