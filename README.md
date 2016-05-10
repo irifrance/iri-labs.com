@@ -1,5 +1,5 @@
 # website for iri-labs.com
 
-Requires golang to build
+Requires golang to build.
 
 
