@@ -40,6 +40,7 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("contact error: %s", e)
 		}
 		c := &Contact{}
+		c.NetAddr = r.RemoteAddr
 		for _, k := range contactKeys {
 			v := r.FormValue(k)
 			switch k {
@@ -101,10 +102,11 @@ Subject: new contact request
 
 `
 	b.WriteString(msg)
-	enc := json.NewEncoder(b)
-	if e := enc.Encode(c); e != nil {
+	d, e := json.MarshalIndent(c, "", "\t")
+	if e != nil {
 		return e
 	}
+	b.Write(d)
 	if e := smtp.SendMail(srvAddr, nil, sender, rcpts, b.Bytes()); e != nil {
 		return e
 	}
