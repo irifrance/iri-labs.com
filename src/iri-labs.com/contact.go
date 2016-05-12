@@ -3,11 +3,14 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/smtp"
 	"os"
 	"sync"
+	"crypto/tls"
 )
 
 var contactSubjects = map[string]string{"jobs": "Jobs",
@@ -90,23 +93,61 @@ func logContact(c *Contact) error {
 	return nil
 }
 
-func sendContact(c *Contact) error {
-	b := bytes.NewBuffer(nil)
-	srvAddr := "aspmx.l.google.com:25"
-	sender := "www@iri-labs.com"
-	rcpts := []string{"wsc@iri-labs.com"}
-	msg := `From: www@iri-labs.com
-To: wsc@iri-labs.com
-Subject: new contact request
-
-`
-	b.WriteString(msg)
-	enc := json.NewEncoder(b)
-	if e := enc.Encode(c); e != nil {
-		return e
+// we do this manually due to constraints of gcloud networking on SMTP
+// we need to set HELO host manually
+// we need to use TLS
+// smtp.SendMail doesn't do this, so we go one step lower
+func sendContact(ctc *Contact) error {
+	srvAddr := "smtp-relay.gmail.com:587"
+	nc, err := net.Dial("tcp", srvAddr)
+	if err != nil {
+		return fmt.Errorf("net dial: %s", err)
 	}
-	if e := smtp.SendMail(srvAddr, nil, sender, rcpts, b.Bytes()); e != nil {
-		return e
+	c, err := smtp.NewClient(nc, "smtp-relay.gmail.com")
+	if err != nil {
+		return fmt.Errorf("dial: %s", err)
+	}
+
+	c.Hello("iri-labs.com")
+	if err := c.StartTLS(&tls.Config{ServerName: "smtp-relay.gmail.com"}); err != nil {
+		return fmt.Errorf("start-tls: %s", err)
+	}
+	if err := c.Mail("www@iri-labs.com"); err != nil {
+		return fmt.Errorf("mail from: %s", err)
+	}
+	if err := c.Rcpt("wsc@iri-labs.com"); err != nil {
+		return fmt.Errorf("rcpt err: %s", err)
+	}
+	bw, err := c.Data()
+	if err != nil {
+		return fmt.Errorf("data err: %s", err)
+	}
+	defer bw.Close()
+
+	b := bytes.NewBufferString(`From: www@iri-labs.com
+To: wsc@iri-labs.com
+Subject: [www.iri-labs.com] new contact request
+
+`)
+	_, e := b.WriteTo(bw)
+	if e != nil {
+		return fmt.Errorf("write headers: %s", e)
+	}
+	b.Reset()
+
+	jb, e := json.MarshalIndent(ctc, "", "\t")
+	if e != nil {
+		return fmt.Errorf("marshal: %s", e)
+	}
+	_, e = bw.Write(jb)
+	if e != nil {
+		return fmt.Errorf("write json: %s", e)
+	}
+	if e := c.Quit(); e != nil {
+		return fmt.Errorf("quit: %s", e)
 	}
 	return nil
 }
+	
+	
+
