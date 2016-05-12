@@ -43,6 +43,7 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("contact error: %s", e)
 		}
 		c := &Contact{}
+		c.NetAddr = r.RemoteAddr
 		for _, k := range contactKeys {
 			v := r.FormValue(k)
 			switch k {
