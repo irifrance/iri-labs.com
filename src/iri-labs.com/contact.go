@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,8 +10,8 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
+	"path/filepath"
 	"sync"
-	"crypto/tls"
 )
 
 var contactSubjects = map[string]string{"jobs": "Jobs",
@@ -29,7 +30,12 @@ type Contact struct {
 	Body      string
 }
 
-var contactLog string = "log/contact"
+func contactLog() string {
+	if *logDirFlag != "" {
+		return filepath.Join(*logDirFlag, "contact")
+	}
+	return "log/contact"
+}
 
 var contactKeys = []string{
 	"name", "institute", "phone", "country", "subject", "body"}
@@ -82,7 +88,7 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 func logContact(c *Contact) error {
 	contactLogMutex.Lock()
 	defer contactLogMutex.Unlock()
-	fp, e := os.OpenFile(contactLog, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	fp, e := os.OpenFile(contactLog(), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if e != nil {
 		return e
 	}
@@ -149,6 +155,3 @@ Subject: [www.iri-labs.com] new contact request
 	}
 	return nil
 }
-	
-	
-

@@ -14,6 +14,7 @@ var markPng []byte = nil
 var styleCss []byte = nil
 var theTemplate *template.Template = nil
 var rootDirFlag *string = flag.String("root", ".", "root directory from which to serve")
+var logDirFlag *string = flag.String("log", "", "log directory")
 var hostFlag *string = flag.String("host", "", "default host address on which to serve")
 var portFlag *int = flag.Int("port", 80, "serve on this port")
 
