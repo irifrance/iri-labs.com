@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -134,6 +135,21 @@ func cssHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(styleCss)
 }
 
+func letterHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/pdf")
+	fp, e := os.Open("letter.pdf")
+	if e != nil {
+		log.Printf("error: %s", e)
+		return
+	}
+	defer fp.Close()
+	_, e = io.Copy(w, fp)
+	if e != nil {
+		log.Printf("error: %s", e)
+		return
+	}
+}
+
 func main() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/favicon.ico", favicoHandler)
@@ -145,6 +161,7 @@ func main() {
 	http.HandleFunc("/jobs", jobsHandler)
 	http.HandleFunc("/contact", contactHandler)
 	http.HandleFunc("/style.css", cssHandler)
+	http.HandleFunc("/letter.pdf", letterHandler)
 
 	log.Printf("serving from %s:%d in %s", *hostFlag, *portFlag, *rootDirFlag)
 	err := http.ListenAndServe(fmt.Sprintf("%s:%d", *hostFlag, *portFlag), nil)
