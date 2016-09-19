@@ -1,4 +1,4 @@
-{{define "head"}}
+{{define "eng/head"}}
 <!DOCTYPE html 
       PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -24,8 +24,8 @@
 				<td colspan="2" align="center">
 					<table width="90%">
 						<tr>
-							<td align="center" id="button{{if eq .Active "/"}}Active{{end}}"> 
-								<a style="display: block;{{if eq .Active "/"}}color: #aa0000;{{end}}" href="/">Home</a> 
+							<td align="center" id="button{{if eq .Active "root"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "root"}}color: #aa0000;{{end}}" href="/">Home</a> 
 							</td>
 							<td align="center" id="button{{if eq .Active "mission"}}Active{{end}}"> 
 								<a style="display: block;{{if eq .Active "mission"}}color: #aa0000;{{end}}" href="/mission">Mission</a> 

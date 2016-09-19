@@ -1,0 +1,51 @@
+{{define "fra/head"}}
+<!DOCTYPE html 
+      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+	<head profile="http://www.w3.org/2005/10/profile">
+		<meta http-equiv="Content-Type" content="text/html" charset="utf-8"/> 
+		<meta http-equiv="Content-Style-Type" content="text/css" charset="utf-8"/> 
+		<link rel="icon" type="image/png" href="/favicon.ico"/>
+		<link rel="stylesheet" type="text/css" href="/style.css"/>
+		<title>IRI France Labs: {{.Active}}</title>
+	</head>
+
+	<body>
+		<center>
+		<table width="100%">
+			<tr>
+				<td> <a href="/"><img src="/mark.png" width="15%"></img></a></td>
+				<td align="center">
+					Récherche et Développement </td>
+			<tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<table width="90%">
+						<tr>
+							<td align="center" id="button{{if eq .Active "root"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "root"}}color: #aa0000;{{end}}" href="/">Home</a> 
+							</td>
+							<td align="center" id="button{{if eq .Active "mission"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "mission"}}color: #aa0000;{{end}}" href="/mission">Mission</a> 
+							</td>
+							<td align="center" id="button{{if eq .Active "womb"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "womb"}}color: #aa0000;{{end}}" href="/womb">Womb</a>
+							</td>
+							<td align="center" id="button{{if eq .Active "about"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "about"}}color: #aa0000;{{end}}" href="/about">About Us</a> 
+							</td>
+							<td align="center" id="button{{if eq .Active "jobs"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "jobs"}}color: #aa0000;{{end}}" href="/jobs">Careers</a> 
+							</td>
+							<td align="center" id="button{{if eq .Active "contact"}}Active{{end}}"> 
+								<a style="display: block;{{if eq .Active "contact"}}color: #aa0000;{{end}}" href="/contact">Contact</a> 
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+{{end}}
