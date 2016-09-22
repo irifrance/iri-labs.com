@@ -143,7 +143,7 @@ func main() {
 	http.HandleFunc("/womb", makeTabHandler("womb"))
 	http.HandleFunc("/about", makeTabHandler("about"))
 	http.HandleFunc("/jobs", makeTabHandler("jobs"))
-	http.HandleFunc("/contact", makeTabHandler("contact"))
+	http.HandleFunc("/contact", contactHandler)
 	http.HandleFunc("/style.css", cssHandler)
 	http.HandleFunc("/letter.pdf", letterHandler)
 

@@ -12,6 +12,8 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"golang.org/x/text/language"
 )
 
 var contactSubjects = map[string]string{"jobs": "Jobs",
@@ -76,8 +78,20 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("error send Contact: %s", e)
 		}
 	}
+	m := language.NewMatcher([]language.Tag{
+		language.English,
+		language.French})
 	// GET or Post
-	err := theTemplate.ExecuteTemplate(w, "contact", &TemplData{Active: "contact",
+	tags, _, err := language.ParseAcceptLanguage(r.Header.Get("Accept-Language"))
+	if err != nil {
+		log.Printf("accept language error: %s\n", err)
+	}
+	tag, _, _ := m.Match(tags...)
+	b, _ := tag.Base()
+	code := b.ISO3()
+	tName := fmt.Sprintf("%s/contact", code)
+	err = theTemplate.ExecuteTemplate(w, tName, &TemplData{Active: "contact",
+		Lang:            code,
 		ContactThanks:   r.Method == "POST",
 		ContactSubjects: contactSubjects})
 	if err != nil {
