@@ -8,35 +8,6 @@
 	{{ if .ContactThanks }}
 		<p style="color: blue;">Thanks for contacting us.  We'll get back to you soon, usually in less than 1 business day.</p>
 	{{end}}
-	<tr><td>
-			IRI France, SAS<br>
-			29 Boulevard de l'Europe<br>
-			38246 Meylan France<br>
-			+33 04 85 88 02 28
-		</td></tr>
-	<tr><td align="left">
-
-			<form method="post" target="_self">
-				<table>
-					<tr><td>Name:</td><td> <input type="text" name="name" required/></td></tr>
-					<tr><td>Institute:</td><td> <input type="text" name="institute"/></td></tr>
-					<tr><td>Email:</td><td> <input type="email" name="email" required/></td></tr>
-					<tr><td>Phone:</td><td><input type="tel" name="phone" required/></td></tr>
-					<tr><td>Request:</td><td>
-							<select name="subject">
-								{{range $key, $value := .ContactSubjects}}
-									<option value="{{ $key }}">{{ $value }}</option>
-								{{end}}
-							</select>
-					<tr><td>Message:</td><td> <textarea name="body" required rows="10" cols="30"></textarea></td></tr>
-					<tr> <td align="center" colspan="2">
-							<input type="submit"/>
-						</td>
-					</tr>
-				</table>
-			</form>
-			</td>
-		</tr>
 </table>
 <center>
 {{template "foot"}}
