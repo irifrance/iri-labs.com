@@ -4,9 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"golang.org/x/text/language"
 )
 
 var favIcon []byte = nil
@@ -45,7 +48,7 @@ func init() {
 	}
 	styleCss = css
 
-	t, e := template.ParseGlob("templates/*.tmpl")
+	t, e := template.ParseGlob("templates/*/*.tmpl")
 	if e != nil {
 		log.Println(e)
 		return
@@ -77,48 +80,30 @@ func logRequest(r *http.Request) {
 
 type TemplData struct {
 	Active          string
+	Lang            string
 	ContactThanks   bool
 	ContactSubjects map[string]string
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	err := theTemplate.ExecuteTemplate(w, "root", &TemplData{Active: "/"})
-	if err != nil {
-		log.Printf("error: %s", err)
+func makeTabHandler(name string) func(w http.ResponseWriter, r *http.Request) {
+	m := language.NewMatcher([]language.Tag{
+		language.English,
+		language.French})
+	return func(w http.ResponseWriter, r *http.Request) {
+		tags, _, err := language.ParseAcceptLanguage(r.Header.Get("Accept-Language"))
+		if err != nil {
+			log.Printf("accept language error: %s\n", err)
+		}
+		tag, _, _ := m.Match(tags...)
+		b, _ := tag.Base()
+		code := b.ISO3()
+		tName := fmt.Sprintf("%s/%s", code, name)
+		err = theTemplate.ExecuteTemplate(w, tName, &TemplData{Active: name, Lang: code})
+		if err != nil {
+			log.Printf("error: %s", err)
+		}
+		logRequest(r)
 	}
-	logRequest(r)
-}
-
-func missionHandler(w http.ResponseWriter, r *http.Request) {
-	err := theTemplate.ExecuteTemplate(w, "mission", &TemplData{Active: "mission"})
-	if err != nil {
-		log.Printf("error: %s", err)
-	}
-	logRequest(r)
-}
-
-func wombHandler(w http.ResponseWriter, r *http.Request) {
-	err := theTemplate.ExecuteTemplate(w, "womb", &TemplData{Active: "womb"})
-	if err != nil {
-		log.Printf("error: %s", err)
-	}
-	logRequest(r)
-}
-
-func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	err := theTemplate.ExecuteTemplate(w, "about", &TemplData{Active: "about"})
-	if err != nil {
-		log.Printf("error: %s", err)
-	}
-	logRequest(r)
-}
-
-func jobsHandler(w http.ResponseWriter, r *http.Request) {
-	err := theTemplate.ExecuteTemplate(w, "jobs", &TemplData{Active: "jobs"})
-	if err != nil {
-		log.Printf("error: %s", err)
-	}
-	logRequest(r)
 }
 
 func favicoHandler(w http.ResponseWriter, r *http.Request) {
@@ -134,17 +119,33 @@ func cssHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(styleCss)
 }
 
+func letterHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/pdf")
+	fp, e := os.Open("letter.pdf")
+	if e != nil {
+		log.Printf("error: %s", e)
+		return
+	}
+	defer fp.Close()
+	_, e = io.Copy(w, fp)
+	if e != nil {
+		log.Printf("error: %s", e)
+		return
+	}
+}
+
 func main() {
-	http.HandleFunc("/", rootHandler)
+	http.HandleFunc("/", makeTabHandler("root"))
 	http.HandleFunc("/favicon.ico", favicoHandler)
 	http.HandleFunc("/favicon", favicoHandler)
 	http.HandleFunc("/mark.png", markHandler)
-	http.HandleFunc("/mission", missionHandler)
-	http.HandleFunc("/womb", wombHandler)
-	http.HandleFunc("/about", aboutHandler)
-	http.HandleFunc("/jobs", jobsHandler)
+	http.HandleFunc("/mission", makeTabHandler("mission"))
+	http.HandleFunc("/womb", makeTabHandler("womb"))
+	http.HandleFunc("/about", makeTabHandler("about"))
+	http.HandleFunc("/jobs", makeTabHandler("jobs"))
 	http.HandleFunc("/contact", contactHandler)
 	http.HandleFunc("/style.css", cssHandler)
+	http.HandleFunc("/letter.pdf", letterHandler)
 
 	log.Printf("serving from %s:%d in %s", *hostFlag, *portFlag, *rootDirFlag)
 	err := http.ListenAndServe(fmt.Sprintf("%s:%d", *hostFlag, *portFlag), nil)
