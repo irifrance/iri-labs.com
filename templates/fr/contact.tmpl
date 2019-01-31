@@ -2,40 +2,8 @@
 {{template "fra/head" .}}
 
 </center>
+{{template "fra/close"}}
 
-<table width="60%">
-
-	{{ if .ContactThanks }}
-		<p style="color: blue;">Merci d'avoir nous contacter.  Nous vous répodrons bientôt.</p>
-	{{end}}
-	<tr><td>
-			IRI France, SAS<br>
-			+33 06 24 92 11 75
-		</td></tr>
-	<tr><td align="left">
-
-			<form method="post" target="_self">
-				<table>
-					<tr><td>Nom, Prénom:</td><td> <input type="text" name="name" required/></td></tr>
-					<tr><td>Institute:</td><td> <input type="text" name="institute"/></td></tr>
-					<tr><td>courriel:</td><td> <input type="email" name="email" required/></td></tr>
-					<tr><td>téléphone:</td><td><input type="tel" name="phone" required/></td></tr>
-					<tr><td>Requête:</td><td>
-							<select name="subject">
-								{{range $key, $value := .ContactSubjects}}
-									<option value="{{ $key }}">{{ $value }}</option>
-								{{end}}
-							</select>
-					<tr><td>Message:</td><td> <textarea name="body" required rows="10" cols="30"></textarea></td></tr>
-					<tr> <td align="center" colspan="2">
-							<input type="submit"/>
-						</td>
-					</tr>
-				</table>
-			</form>
-			</td>
-		</tr>
-</table>
 <center>
 {{template "fra/foot"}}
 {{end}}
